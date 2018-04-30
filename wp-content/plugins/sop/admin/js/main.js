@@ -8,10 +8,37 @@ var apiUrl = 'https://www.googleapis.com/pagespeedonline/v4/runPagespeed?';
 
 $.get(apiUrl, {url: testUrl, key: apiKey}, function(returnData) {
     
-    var ruleResults = returnData.formattedResults.ruleResults;
+    var ruleResultData = returnData.formattedResults.ruleResults;
 
-    console.log("rul", ruleResults);
-
+    var ruleResults = [];
+    var i = 0;
+   
+    for (var key in ruleResultData) {
+        var item = ruleResultData[key];
+        var summaryArgs = [];
+        var summaryType = null;
+        console.log("summery", item.summary.format);
+        if(item.summary.format.indexOf("{{") > -1) {
+            var j = 0;
+            for(var key2 in item.summary.args) {
+                console.log("type?", item.summary.args[key2].type);
+                summaryType = item.summary.args[key2].type; 
+                summaryArgs[j] = [
+                    item.summary.args[key2].key,
+                    item.summary.args[key2].value,
+                ];
+                j++;
+            }
+        }
+        ruleResults[i] = [
+            item.localizedRuleName,
+            item.ruleImpact,
+            summaryType,
+            summaryArgs
+        ];
+        i++;
+    }
+    /*
     $('#f0').html(ruleResults.AvoidLandingPageRedirects.localizedRuleName);
     $('#f1').html(ruleResults.AvoidLandingPageRedirects.ruleImpact);
 
@@ -40,5 +67,5 @@ $.get(apiUrl, {url: testUrl, key: apiKey}, function(returnData) {
     $('#n1').html(ruleResults.OptimizeImages.ruleImpact);
 
     $('#te0').html(ruleResults.PrioritizeVisibleContent.localizedRuleName);
-    $('#te1').html(ruleResults.PrioritizeVisibleContent.ruleImpact);
+    $('#te1').html(ruleResults.PrioritizeVisibleContent.ruleImpact);*/
 });
