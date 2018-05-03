@@ -1,0 +1,392 @@
+/* general styling */
+
+h3 {
+    display: inline-block;
+}
+
+h4 {
+    font-size: 23px;
+}
+
+.subTitle {
+    font-size: 20px;
+}
+
+.noMargin {
+    margin: 0;
+}
+
+.noMarginTop {
+    margin-top: 0;
+}
+
+.noMarginBottom {
+    margin-bottom: 0;
+}
+
+/* admin menu bar styling */
+
+#wpadminbar #wp-admin-bar-sop-bar a {
+    color: #00c853;
+}
+
+#wpadminbar #wp-admin-bar-sop-bar .ab-icon:before {
+    content: '\f155';
+    top: 2px;
+    color: #00c853;
+}
+
+/* card styling */
+
+.gradeContainer {
+    padding-bottom: 15px;
+}
+
+.gradeContainer p {
+    font-size: 18px;
+}
+
+.badgeGrade {
+    margin-right: 0;
+    margin-left: 11.25px;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+}
+
+.badgeGrade p {
+    color: white;
+}
+
+.speed {
+    position: relative;
+    top: 50px;
+}
+
+/* try again styling */
+
+.tryAgainContainer a {
+    margin-top: 15px;
+}
+
+.tryAgainContainer a:hover {
+    color: white;
+}
+
+.tryAgainContainer p {
+    font-size: 20px;
+}
+
+/* collapsible styling */
+
+.collapsible-header p {
+    font-size: 16px;
+}
+
+.collapsible-body p {
+    font-size: 16px;
+}
+
+.subBadge {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    position: relative;
+    top: -2px;
+    margin-left: auto;
+}
+
+.subBadge p {
+    color: white;
+    font-weight: 900;
+    position: relative;
+    top: 2px;
+}
+
+/* progressbar styling */
+
+.start-screen {
+  display: flex;
+  justify-content: center;
+  flex-flow: nowrap column;
+  align-items: center;
+  min-height: 50vh;
+}
+.start-screen .loading {
+  display: flex;
+  margin: 24px 0;
+}
+.start-screen .loading .loading__element {
+  font: normal 100 2rem/1 Roboto;
+  letter-spacing: .5em;
+}
+[class*="loading__element"] {
+  animation: bouncing 2s infinite ease;
+}
+
+.start-screen .loading .el1 {
+    -webkit-animation-delay: 0.1s;
+            animation-delay: 0.1s;
+  }
+  
+  .start-screen .loading .el2 {
+    -webkit-animation-delay: 0.2s;
+            animation-delay: 0.2s;
+  }
+  
+  .start-screen .loading .el3 {
+    -webkit-animation-delay: 0.3s;
+            animation-delay: 0.3s;
+  }
+  
+  .start-screen .loading .el4 {
+    -webkit-animation-delay: 0.4s;
+            animation-delay: 0.4s;
+  }
+  
+  .start-screen .loading .el5 {
+    -webkit-animation-delay: 0.5s;
+            animation-delay: 0.5s;
+  }
+  
+  .start-screen .loading .el6 {
+    -webkit-animation-delay: 0.6s;
+            animation-delay: 0.6s;
+  }
+  
+  .start-screen .loading .el7 {
+    -webkit-animation-delay: 0.7s;
+            animation-delay: 0.7s;
+  }
+
+  /*@-webkit-keyframes bouncing {
+    0%, 100% {
+      -webkit-transform: scale3d(1, 1, 1);
+              transform: scale3d(1, 1, 1);
+    }
+    50% {
+      -webkit-transform: scale3d(0, 0, 1);
+              transform: scale3d(0, 0, 1);
+    }
+  }
+  
+  @keyframes bouncing {
+    0%, 100% {
+      -webkit-transform: scale3d(1, 1, 1);
+              transform: scale3d(1, 1, 1);
+    }
+    50% {
+      -webkit-transform: scale3d(0, 0, 1);
+              transform: scale3d(0, 0, 1);
+    }
+  }*/
+
+
+  /* Error figure container */
+
+  .errorFigureContainer {
+    background: whitesmoke;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  
+  @-webkit-keyframes body {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    50% {
+      -webkit-transform: rotate(-1deg);
+              transform: rotate(-1deg);
+    }
+    100% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+  }
+  
+  @keyframes body {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    50% {
+      -webkit-transform: rotate(-1deg);
+              transform: rotate(-1deg);
+    }
+    100% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+  }
+  @-webkit-keyframes sparks {
+    0% {
+      -webkit-transform: scale(0.9) translateY(5px);
+              transform: scale(0.9) translateY(5px);
+      opacity: 0.5;
+    }
+    50% {
+      -webkit-transform: scale(1) translateY(0px);
+              transform: scale(1) translateY(0px);
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: scale(0.9) translateY(5px);
+              transform: scale(0.9) translateY(5px);
+      opacity: 0.5;
+    }
+  }
+  @keyframes sparks {
+    0% {
+      -webkit-transform: scale(0.9) translateY(5px);
+              transform: scale(0.9) translateY(5px);
+      opacity: 0.5;
+    }
+    50% {
+      -webkit-transform: scale(1) translateY(0px);
+              transform: scale(1) translateY(0px);
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: scale(0.9) translateY(5px);
+              transform: scale(0.9) translateY(5px);
+      opacity: 0.5;
+    }
+  }
+  @-webkit-keyframes sparks2 {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+              transform: rotate(360deg);
+    }
+  }
+  @keyframes sparks2 {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+              transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes hands-right {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    50% {
+      -webkit-transform: rotate(-5deg);
+              transform: rotate(-5deg);
+    }
+    100% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+  }
+  @keyframes hands-right {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    50% {
+      -webkit-transform: rotate(-5deg);
+              transform: rotate(-5deg);
+    }
+    100% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+  }
+  @-webkit-keyframes lid {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    50% {
+      -webkit-transform: rotate(-2deg);
+              transform: rotate(-2deg);
+    }
+    100% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+  }
+  @keyframes lid {
+    0% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+    50% {
+      -webkit-transform: rotate(-2deg);
+              transform: rotate(-2deg);
+    }
+    100% {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg);
+    }
+  }
+  .errorFigureContainer::before {
+    content: "";
+    display: block;
+    width: 220px;
+    height: 220px;
+    background: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+            transform: translateY(-50%) translateX(-50%);
+    border-radius: 50%;
+  }
+  
+  #body {
+    -webkit-transform-origin: center;
+            transform-origin: center;
+    -webkit-animation: body 2.1s ease infinite;
+            animation: body 2.1s ease infinite;
+  }
+  
+  #foodbox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateY(-50%) translateX(-50%);
+            transform: translateY(-50%) translateX(-50%);
+  }
+  
+  #hands-right {
+    -webkit-transform-origin: bottom left;
+            transform-origin: bottom left;
+    fill: white;
+    -webkit-animation: hands-right 0.7s linear infinite;
+            animation: hands-right 0.7s linear infinite;
+  }
+  
+  #sparks-right {
+    -webkit-transform-origin: center;
+            transform-origin: center;
+    -webkit-animation: sparks 3s ease infinite;
+            animation: sparks 3s ease infinite;
+  }
+  
+  #sparks-left {
+    -webkit-transform-origin: center;
+            transform-origin: center;
+    -webkit-animation: sparks2 5s linear infinite;
+            animation: sparks2 5s linear infinite;
+  }
+  
+  #lid {
+    -webkit-transform-origin: center;
+            transform-origin: center;
+    -webkit-animation: lid 0.7s linear infinite;
+            animation: lid 0.7s linear infinite;
+  }
+  

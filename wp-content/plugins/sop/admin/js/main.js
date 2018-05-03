@@ -1,71 +1,83 @@
 var apiKey = 'AIzaSyB4FTmZcK_2H9kh3qm5fErvtGf90xvoFMQ';
 
-var testUrl = 'http://www.off-topic.tk';
+var testUrl = 'http://facebook.com';
 
 console.log('ww', testUrl);
 
 var apiUrl = 'https://www.googleapis.com/pagespeedonline/v4/runPagespeed?';
 
-$.get(apiUrl, {url: testUrl, key: apiKey}, function(returnData) {
+var startTime = Date.now();
+jQuery.get(apiUrl, {url: testUrl, key: apiKey, snapshots: true, screenshot: true}, function(returnData) {
+    var elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+
+    if(returnData.responseCode >= 400) {
+        jQuery('.tryAgainContainer').removeClass('hide');
+    } else {
+        console.log("retu", returnData);
     
-    var ruleResultData = returnData.formattedResults.ruleResults;
+        var ruleResultData = returnData.formattedResults.ruleResults;
 
-    var ruleResults = [];
-    var i = 0;
-   
-    for (var key in ruleResultData) {
-        var item = ruleResultData[key];
-        var summaryArgs = [];
-        var summaryType = null;
-        console.log("summery", item.summary.format);
-        if(item.summary.format.indexOf("{{") > -1) {
-            var j = 0;
-            for(var key2 in item.summary.args) {
-                console.log("type?", item.summary.args[key2].type);
-                summaryType = item.summary.args[key2].type; 
-                summaryArgs[j] = [
-                    item.summary.args[key2].key,
-                    item.summary.args[key2].value,
-                ];
-                j++;
-            }
+        console.log(ruleResultData);
+
+        var pageSpeed = returnData.ruleGroups.SPEED.score;
+        var screenshot = returnData.screenshot.data;
+        var ruleResults = [];
+        var ruleImpactSummary = 0;
+
+        for(var key in ruleResultData) 
+        {
+            var item = ruleResultData[key];
+            ruleImpactSummary += item.ruleImpact;
         }
-        ruleResults[i] = [
-            item.localizedRuleName,
-            item.ruleImpact,
-            summaryType,
-            summaryArgs
-        ];
-        i++;
+
+        console.log(ruleImpactSummary);
+        
+        var i = 0;
+        for (var key in ruleResultData) {
+            var item = ruleResultData[key];
+            var summaryArgs = [];
+            var summaryType = null;
+
+            if(item.summary.format.indexOf("{{") > -1) {
+                var j = 0;
+                for(var key2 in item.summary.args) {
+
+                    summaryType = item.summary.args[key2].type; 
+                    summaryArgs[j] = [
+                        item.summary.args[key2].key,
+                        item.summary.args[key2].value
+                    ];
+                    j++;
+                }
+            }
+
+            var ruleImpactPercent = Math.round((1 - (item.ruleImpact / ruleImpactSummary)) * 100);
+            ruleResults[i] = [
+                item.localizedRuleName,
+                ruleImpactPercent,
+                item.summary.format,
+                summaryType,
+                summaryArgs
+            ];
+            i++;
+        }
+        
+        jQuery(document).ready(function() {
+            var data = {
+                'action': 'sop',
+                'ruleResults': ruleResults,
+                'pageSpeed': pageSpeed,
+                'elapsedTime': elapsedTime,
+                'screenshot': screenshot
+            };
+
+            jQuery('.sopContainer').load(sop_ajax.ajax_url + ' .sopContainer', data, function() {
+                jQuery('.start-screen').addClass("hide");
+
+                jQuery('.collapsible').collapsible();
+
+                jQuery('.sopContainer').removeClass("hide");
+            });
+        });
     }
-    /*
-    $('#f0').html(ruleResults.AvoidLandingPageRedirects.localizedRuleName);
-    $('#f1').html(ruleResults.AvoidLandingPageRedirects.ruleImpact);
-
-    $('#s0').html(ruleResults.EnableGzipCompression.localizedRuleName);
-    $('#s1').html(ruleResults.EnableGzipCompression.ruleImpact);
-
-    $('#t0').html(ruleResults.LeverageBrowserCaching.localizedRuleName);
-    $('#t1').html(ruleResults.LeverageBrowserCaching.ruleImpact);
-
-    $('#fo0').html(ruleResults.MainResourceServerResponseTime.localizedRuleName);
-    $('#fo1').html(ruleResults.MainResourceServerResponseTime.ruleImpact);
-
-    $('#fi0').html(ruleResults.MinifyCss.localizedRuleName);
-    $('#fi1').html(ruleResults.MinifyCss.ruleImpact);
-
-    $('#si0').html(ruleResults.MinifyHTML.localizedRuleName);
-    $('#si1').html(ruleResults.MinifyHTML.ruleImpact);
-
-    $('#se0').html(ruleResults.MinifyJavaScript.localizedRuleName);
-    $('#se1').html(ruleResults.MinifyJavaScript.ruleImpact);
-
-    $('#e0').html(ruleResults.MinimizeRenderBlockingResources.localizedRuleName);
-    $('#e1').html(ruleResults.MinimizeRenderBlockingResources.ruleImpact);
-
-    $('#n0').html(ruleResults.OptimizeImages.localizedRuleName);
-    $('#n1').html(ruleResults.OptimizeImages.ruleImpact);
-
-    $('#te0').html(ruleResults.PrioritizeVisibleContent.localizedRuleName);
-    $('#te1').html(ruleResults.PrioritizeVisibleContent.ruleImpact);*/
 });
