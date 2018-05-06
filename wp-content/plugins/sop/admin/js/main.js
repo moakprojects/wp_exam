@@ -1,6 +1,6 @@
 var apiKey = 'AIzaSyB4FTmZcK_2H9kh3qm5fErvtGf90xvoFMQ';
 
-var testUrl = 'http://facebook.com';
+var testUrl = 'http://www.erstebank.hu';
 
 console.log('ww', testUrl);
 
@@ -71,11 +71,17 @@ jQuery.get(apiUrl, {url: testUrl, key: apiKey, snapshots: true, screenshot: true
                 'screenshot': screenshot
             };
 
+            if(pageSpeed >= 80) {
+                jQuery("#wp-admin-bar-sop-bar").find('a').eq(0).html("<span class='ab-icon star'></span> <span class='goodTitle'>Your page quality is Good</span>");
+            } else if(pageSpeed >= 60) {
+                jQuery("#wp-admin-bar-sop-bar").find('a').eq(0).html("<span class='ab-icon halfStar'></span> <span class='mediumTitle'>Your page quality is Medium</span>");
+            } else {
+                jQuery("#wp-admin-bar-sop-bar").find('a').eq(0).html("<span class='ab-icon emptyStar'></span> <span class='lowTitle'>Your page quality is Low</span>");
+            }
+
             jQuery('.sopContainer').load(sop_ajax.ajax_url + ' .sopContainer', data, function() {
                 jQuery('.start-screen').addClass("hide");
-
                 jQuery('.collapsible').collapsible();
-
                 jQuery('.sopContainer').removeClass("hide");
             });
         });

@@ -13,10 +13,17 @@ if(!function_exists('add_action')) {
     exit;
 }
 
+session_start();
+
 class Sop {
+  
 
     function __construct() {
 
+    }
+
+    function activate() {
+        
     }
 
     function add_admin_menu() {
@@ -31,18 +38,31 @@ class Sop {
     }
 
     function add_toolbar_item($wp_admin_bar) {
-        $title = '<span class="ab-icon"></span> Your page is Good';
+
+        $title = 'The quality of your page is counting...';
+        
         $wp_admin_bar -> add_node(array(
             'id' => 'sop-bar',
             'title' => $title,
-            'href' => admin_url('admin.php?page=sop'),
-            'meta' => array(
-                'tabindex' => "0"
-            )
+            'href' => admin_url('admin.php?page=sop')
         ));
     }
 
+    function modify_toolbar_title($wp_admin_bar) {
+       
+        if(isset($_SESSION["toolbarTitle"])) {
+        
+            $wp_admin_bar->add_node(array(
+                'id' => 'sop-bar',
+                'title' => $_SESSION["toolbarTitle"]
+            ));
+        }
+
+        return $wp_admin_bar;
+    }
+
     function sop() {
+
         echo "<h3>SOP</h3> <span class='subTitle'>- your SEO friend</span>";
 
         echo '
@@ -76,7 +96,8 @@ class Sop {
         if(isset($_POST["pageSpeed"])) {
             $screenshotData = $_POST["screenshot"];
             $screenshotSrc = str_replace(array('_', '-'), array('/', '+'), $screenshotData);
-            $badgeStyle = $this->badgeCategorization($_POST['pageSpeed']);
+            $badgeStyle = $this->categorization($_POST['pageSpeed']);
+            $this->titleToSession($_POST["pageSpeed"]);
 
             echo "";
         echo '
@@ -143,7 +164,7 @@ class Sop {
             ';
         if(isset($_POST["ruleResults"])) {
             foreach($_POST["ruleResults"] as $ruleResult) {
-                $badgeStyle = $this->badgeCategorization($ruleResult[1]);
+                $badgeStyle = $this->categorization($ruleResult[1]);
                 if(isset($ruleResult[4])) {
                     $format = $this->summaryFormatCompletion($ruleResult[2], $ruleResult[3], $ruleResult[4]);
                 } else {
@@ -188,34 +209,51 @@ class Sop {
         echo '</div>'; //sopContainer closing div
     }
 
-    function badgeCategorization($score) {
+    function categorization($score) {
         
-        $badgeStyle = array();
+        $categoryStyle = array();
         
         if($score >= 80) {
-            $badgeStyle["backgroundColor"] = '#00c853';
+            $categoryStyle["backgroundColor"] = '#00c853';
+            
             if($score >= 90) {
-                $badgeStyle["title"] = "A";
+                $categoryStyle["title"] = "A";
             } else {
-                $badgeStyle["title"] = "B";
+                $categoryStyle["title"] = "B";
             }
         } else if($score >= 60) {
-            $badgeStyle["backgroundColor"] = '#ffd600';
+            $categoryStyle["backgroundColor"] = '#ffd600';
+
             if($score >= 70) {
-                $badgeStyle["title"] = "C";
+                $categoryStyle["title"] = "C";
             } else {
-                $badgeStyle["title"] = "D";
+                $categoryStyle["title"] = "D";
             }
         } else {
-            $badgeStyle["backgroundColor"] = '#dd2c00';
+            $categoryStyle["backgroundColor"] = '#dd2c00';
+
             if($score >= 50) {
-                $badgeStyle["title"] = "E";
+                $categoryStyle["title"] = "E";
             } else {
-                $badgeStyle["title"] = "F";
+                $categoryStyle["title"] = "F";
             }
         }
 
-        return $badgeStyle;
+        return $categoryStyle;
+    }
+
+    function titleToSession($score) {
+        
+        if($score >= 80) {
+            $_SESSION["toolbarTitle"] = "<span class='ab-icon star'></span> <span class='goodTitle'>Your page quality is Good</span>";
+            
+        } else if($score >= 60) {
+            $_SESSION["toolbarTitle"] = "<span class='ab-icon halfStar'></span> <span class='mediumTitle'>Your page quality is Medium</span>";
+
+        } else {
+            $_SESSION["toolbarTitle"] = "<span class='ab-icon emptyStar'></span> <span class='lowTitle'>Your page quality is Low</span>";
+
+        }
     }
 
     function summaryFormatCompletion($format, $type, $args) {
@@ -223,8 +261,15 @@ class Sop {
             $formatChange = str_replace('{{BEGIN_LINK}}', "<a href='" . $args[0][1] ."' target='_blank'>", $format);
             $summaryFormat = str_replace('{{END_LINK}}', '</a>', $formatChange);
         } else if($type === 'INT_LITERAL') {
-            $formatChange = str_replace('{{NUM_SCRIPTS}}', $args[0][1], $format);
-            $summaryFormat = str_replace('{{NUM_CSS}}', $args[1][1], $formatChange);
+            if(strpos($format, '{{NUM_SCRIPTS}}') && strpos($format, '{{NUM_CSS}}')) {
+                $formatChange = str_replace('{{NUM_SCRIPTS}}', $args[0][1], $format);
+                $summaryFormat = str_replace('{{NUM_CSS}}', $args[1][1], $formatChange);
+            } else if(strpos($format, '{{NUM_REDIRECTS}}')) {
+                $summaryFormat = str_replace('{{NUM_REDIRECTS}}', $args[0][1], $format);
+            } else {
+                $summaryFormat = $format;
+            }
+            
         } else {
             $summaryFormat = $format;
         }
@@ -267,17 +312,70 @@ class Sop {
 
     function sop_dashboard_widget_function() {
 
-        echo "Hello World, I'm a great Dashboard Widget";
+        if(isset($_POST["pageSpeed"])) {
+            echo $_POST["pageSpeed"];
+        }
+
+        echo "
+            <div class='row widgetFirstRow noMarginBottom'>
+                <div class='col s6'>
+                    <span class='widgetTitle'>Page speed grade:</span> 
+                </div>
+                <div class='col s2'>
+                    <div class='badgeGrade widgetBadgeGrade' style='background-color: #00c853'>
+                        <p class='center-align'>B</p>
+                    </div>
+                </div>
+                <div class='col s2'>
+                    <p class='score widgetScore center-align noMargin'>87</p>
+                </div>
+            </div>
+            <hr>
+            <div class='row widgetSecondRow'>
+                <div class='col s12'>
+                    <p>The main problems are:</p>
+                </div>
+            </div>
+            <div class='row widgetThirdRow'>
+                <div class='col s2'>
+                    <div class='badgeGrade problemGrade' style='background-color: #dd2c00'>
+                        <p class='center-align'>E</p>
+                    </div>
+                </div>
+                <div class='col s2'>
+                    <p class='score problemScore center-align noMargin'>45</p>
+                </div>
+                <div class='col s6'>
+                    <p class='score center-align problemTitle noMargin'>Optimize images</p>
+                </div>
+            </div>
+            <div class='row widgetThirdRow'>
+                <div class='col s2'>
+                    <div class='badgeGrade problemGrade' style='background-color: #dd2c00'>
+                        <p class='center-align'>F</p>
+                    </div>
+                </div>
+                <div class='col s2'>
+                    <p class='score problemScore center-align noMargin'>27</p>
+                </div>
+                <div class='col s6'>
+                    <p class='score center-align problemTitle noMargin'>
+                    Avoid landing page redirects</p>
+                </div>
+            </div>
+            ";
+
     }
 }
 
 if (class_exists('Sop')) {
     $sopObj = new Sop();
     $sopObj->register();
-    add_action('admin_menu', array($sopObj,'add_admin_menu'));
-    add_action('admin_bar_menu', array($sopObj,'add_toolbar_item'), 100);
     add_action('wp_ajax_sop', array($sopObj, 'sop'));
     add_action( 'wp_dashboard_setup', array($sopObj, 'add_dashboard_widget'));
+    add_action('admin_bar_menu', array($sopObj,'add_toolbar_item'), 100);
+    add_action('admin_menu', array($sopObj,'add_admin_menu'));
+    add_filter('admin_bar_menu', array($sopObj, 'modify_toolbar_title'), 200);
 }
 
 ?>
