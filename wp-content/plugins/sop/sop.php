@@ -22,10 +22,6 @@ class Sop {
 
     }
 
-    function activate() {
-        
-    }
-
     function add_admin_menu() {
         add_menu_page(
             'Søgemaskine Optimering Plugin',
@@ -296,7 +292,7 @@ class Sop {
         wp_add_dashboard_widget(
                 'sop_dashboard_widget',
                 'SOP',
-                array($this,'sop_dashboard_widget_function')
+                array($this,'sop_dashboard_widget')
             );
 
             global $wp_meta_boxes;
@@ -310,24 +306,87 @@ class Sop {
             $wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
     }
 
-    function sop_dashboard_widget_function() {
-
-        if(isset($_POST["pageSpeed"])) {
-            echo $_POST["pageSpeed"];
+    function getProblematicImpacts($ruleResults) {
+        $problematicImpacts = array();
+        foreach($ruleResults as $impact) {
+            if($impact[1] < 80) {
+                array_push($problematicImpacts, array($impact[1], $impact[0]));
+            }
         }
 
-        echo "
-            <div class='row widgetFirstRow noMarginBottom'>
+        usort($problematicImpacts, function($a, $b) {
+            return $a[0] <=> $b[0];
+        });
+
+        return $problematicImpacts;
+    }
+
+    function sop_dashboard_widget() {
+
+        echo "<div class='widgetContainer'>";
+        if(isset($_POST["pageSpeed"])) {
+
+            $badgeStyle = $this->categorization($_POST['pageSpeed']);
+            $problematicImpacts = $this->getProblematicImpacts($_POST["ruleResults"]);
+
+            $_SESSION["widgetData"]["pageSpeed"] = $_POST['pageSpeed'];
+            $_SESSION["widgetData"]["problematicImpacts"] = $problematicImpacts;
+
+            echo "
+                <div class='row widgetFirstRow'>
+                    <div class='col s6'>
+                        <span class='widgetTitle'>Page speed grade:</span> 
+                    </div>
+                    <div class='col s2'>
+                        <div class='badgeGrade widgetBadgeGrade' style='background-color: " . $badgeStyle["backgroundColor"] . "'>
+                            <p class='center-align noMargin'>" . $badgeStyle["title"] . "</p>
+                        </div>
+                    </div>
+                    <div class='col s2'>
+                        <p class='score widgetScore left-align noMargin'>" . $_POST['pageSpeed'] . "</p>
+                    </div>
+                </div>
+                <hr>
+                <div class='row widgetSecondRow'>
+                    <div class='col s12'>
+                        <p>The main problems are:</p>
+                    </div>
+                </div>
+                ";
+                foreach($problematicImpacts as $impact) {
+                    $badgeStyle = $this->categorization($impact[0]);
+                    echo "
+                    <div class='row widgetThirdRow'>
+                        <div class='col s2'>
+                            <div class='badgeGrade problemGrade' style='background-color: " . $badgeStyle["backgroundColor"] . "'>
+                                <p class='center-align noMargin'>" . $badgeStyle["title"] . "</p>
+                            </div>
+                        </div>
+                        <div class='col s2'>
+                            <p class='score problemScore left-align noMargin'>" . $impact[0] . "</p>
+                        </div>
+                        <div class='col s8'>
+                            <p class='score left-align problemTitle noMargin'>" . $impact[1] . "</p>
+                        </div>
+                    </div>
+                    ";
+                }
+        } else if(isset($_SESSION["widgetData"])) {
+
+            $badgeStyle = $this->categorization($_SESSION["widgetData"]['pageSpeed']);
+
+            echo "
+            <div class='row widgetFirstRow'>
                 <div class='col s6'>
                     <span class='widgetTitle'>Page speed grade:</span> 
                 </div>
                 <div class='col s2'>
-                    <div class='badgeGrade widgetBadgeGrade' style='background-color: #00c853'>
-                        <p class='center-align'>B</p>
+                    <div class='badgeGrade widgetBadgeGrade' style='background-color: " . $badgeStyle["backgroundColor"] . "'>
+                        <p class='center-align noMargin'>" . $badgeStyle["title"] . "</p>
                     </div>
                 </div>
                 <div class='col s2'>
-                    <p class='score widgetScore center-align noMargin'>87</p>
+                    <p class='score widgetScore left-align noMargin'>" . $_SESSION["widgetData"]['pageSpeed'] . "</p>
                 </div>
             </div>
             <hr>
@@ -336,35 +395,32 @@ class Sop {
                     <p>The main problems are:</p>
                 </div>
             </div>
-            <div class='row widgetThirdRow'>
-                <div class='col s2'>
-                    <div class='badgeGrade problemGrade' style='background-color: #dd2c00'>
-                        <p class='center-align'>E</p>
-                    </div>
-                </div>
-                <div class='col s2'>
-                    <p class='score problemScore center-align noMargin'>45</p>
-                </div>
-                <div class='col s6'>
-                    <p class='score center-align problemTitle noMargin'>Optimize images</p>
-                </div>
-            </div>
-            <div class='row widgetThirdRow'>
-                <div class='col s2'>
-                    <div class='badgeGrade problemGrade' style='background-color: #dd2c00'>
-                        <p class='center-align'>F</p>
-                    </div>
-                </div>
-                <div class='col s2'>
-                    <p class='score problemScore center-align noMargin'>27</p>
-                </div>
-                <div class='col s6'>
-                    <p class='score center-align problemTitle noMargin'>
-                    Avoid landing page redirects</p>
-                </div>
-            </div>
             ";
 
+            foreach($_SESSION["widgetData"]['problematicImpacts'] as $impact) {
+
+                $badgeStyle = $this->categorization($impact[0]);
+
+                echo "
+                <div class='row widgetThirdRow'>
+                    <div class='col s2'>
+                        <div class='badgeGrade problemGrade' style='background-color: " . $badgeStyle["backgroundColor"] . "'>
+                            <p class='center-align noMargin'>" . $badgeStyle["title"] . "</p>
+                        </div>
+                    </div>
+                    <div class='col s2'>
+                        <p class='score problemScore left-align noMargin'>" . $impact[0] . "</p>
+                    </div>
+                    <div class='col s8'>
+                        <p class='score left-align problemTitle noMargin'>" . $impact[1] . "</p>
+                    </div>
+                </div>
+                ";
+            }
+        } else {
+            echo "<p>Your data is loading...</p>";
+        }
+        echo "</div>";
     }
 }
 
@@ -372,7 +428,8 @@ if (class_exists('Sop')) {
     $sopObj = new Sop();
     $sopObj->register();
     add_action('wp_ajax_sop', array($sopObj, 'sop'));
-    add_action( 'wp_dashboard_setup', array($sopObj, 'add_dashboard_widget'));
+    add_action('wp_ajax_sop_widget', array($sopObj, 'sop_dashboard_widget'));
+    add_action('wp_dashboard_setup', array($sopObj, 'add_dashboard_widget'));
     add_action('admin_bar_menu', array($sopObj,'add_toolbar_item'), 100);
     add_action('admin_menu', array($sopObj,'add_admin_menu'));
     add_filter('admin_bar_menu', array($sopObj, 'modify_toolbar_title'), 200);

@@ -1,6 +1,6 @@
 var apiKey = 'AIzaSyB4FTmZcK_2H9kh3qm5fErvtGf90xvoFMQ';
 
-var testUrl = 'http://www.erstebank.hu';
+var testUrl = 'http://youtube.com';
 
 console.log('ww', testUrl);
 
@@ -84,6 +84,14 @@ jQuery.get(apiUrl, {url: testUrl, key: apiKey, snapshots: true, screenshot: true
                 jQuery('.collapsible').collapsible();
                 jQuery('.sopContainer').removeClass("hide");
             });
+
+            var widgetData = {
+                'action' : 'sop_widget',
+                'pageSpeed' : pageSpeed,
+                'ruleResults' : ruleResults
+            }
+
+            jQuery('.widgetContainer').load(sop_ajax.ajax_url + ' .widgetContainer', widgetData, "");
         });
     }
 });

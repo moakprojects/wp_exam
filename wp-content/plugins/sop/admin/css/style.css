@@ -179,7 +179,7 @@ h4 {
             animation-delay: 0.7s;
   }
 
-  /*@-webkit-keyframes bouncing {
+  @-webkit-keyframes bouncing {
     0%, 100% {
       -webkit-transform: scale3d(1, 1, 1);
               transform: scale3d(1, 1, 1);
@@ -199,7 +199,7 @@ h4 {
       -webkit-transform: scale3d(0, 0, 1);
               transform: scale3d(0, 0, 1);
     }
-  }*/
+  }
 
 
   /* Error figure container */
@@ -417,21 +417,18 @@ h4 {
   }
 
   .widgetBadgeGrade {
+    margin: 0px;
     position: relative;
-    top: -16px;
-    left: -47px;
+    top: -3px;
   }
 
   .widgetBadgeGrade p {
     position: relative;
-    top: 2px;
+    top: 4px;
   }
 
   .widgetScore {
     font-size: 16px;
-    position: relative;
-    left: -70px;
-    top: -2px;
   }
 
   .widgetFirstRow {
@@ -439,24 +436,23 @@ h4 {
   }
 
   .problemGrade {
+    margin: 0px;
     position: relative;
-    top: -26px;
+    top: -3px;
   }
 
   .problemGrade p {
     position: relative;
-    top: 2px;
+    top: 4px;
   }
 
   .problemScore {
     position: relative;
-    top: -9px;
-    left: -22px;
+    left: -18px;
   }
 
   .problemTitle {
     position: relative;
-    left: -70px;
-    top: -7px;
+    left: -50px;
   }
   
