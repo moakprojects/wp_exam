@@ -22,6 +22,7 @@ class Sop {
 
     }
 
+    // create admin menu page
     function add_admin_menu() {
         add_menu_page(
             'Søgemaskine Optimering Plugin',
@@ -33,6 +34,7 @@ class Sop {
             35 );
     }
 
+    // add a custom toolbar item into toolbar menu in the header
     function add_toolbar_item($wp_admin_bar) {
 
         $title = 'The quality of your page is counting...';
@@ -44,6 +46,7 @@ class Sop {
         ));
     }
 
+    // rewite the label of our custom toolbar item (if the page speed value is under 80 we indicate problem is occured) 
     function modify_toolbar_title($wp_admin_bar) {
        
         if(isset($_SESSION["toolbarTitle"])) {
@@ -57,6 +60,7 @@ class Sop {
         return $wp_admin_bar;
     }
 
+    // this method build-up the admin page
     function sop() {
 
         echo "<h3>SOP</h3> <span class='subTitle'>- your SEO friend</span>";
@@ -194,6 +198,57 @@ class Sop {
         echo '</ul>';
         echo '</div>';
 
+        $metaTags = $this->sop_check_meta_tags();
+        
+        echo "
+        <div class='row'>
+            <div class='col s5 offset-s1'>
+                <div class='row noMargin'>
+                    <h4 class='col s11'>Meta tags check</h4>
+                </div>'
+                <div class='row'>
+                    <div class='col s10 noLeftPadding'>
+                        <table class='metaTable'>
+                            <thead>
+                            <tr>
+                                <th>Meta tag</th>
+                                <th>Exist</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Content-Type</td>
+                                <td>" . (isset($metaTags["content-type"]) ? "<i class='material-icons goodTitle'>check</i>" : "<i class='material-icons lowTitle'>close</i>") . "</td>
+                            </tr>
+                            <tr>
+                                <td>Description</td>
+                                <td>" . (isset($metaTags["description"]) ? "<i class='material-icons goodTitle'>check</i>" : "<i class='material-icons lowTitle'>close</i>") . "</td>
+                            </tr>
+                            <tr>
+                                <td>Viewport</td>
+                                <td>" . (isset($metaTags["viewport"]) ? "<i class='material-icons goodTitle'>check</i>" : "<i class='material-icons lowTitle'>close</i>") . "</td>
+                            </tr>
+                            <tr>
+                                <td>Robots</td>
+                                <td>" . (isset($metaTags["robots"]) ? "<i class='material-icons goodTitle'>check</i>" : "<i class='material-icons lowTitle'>close</i>") . "</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class='col s5 noRightPadding'>
+                <div class='row'>
+                    <h4 class='col s11'>Content breakdown by MIME type</h4>
+                </div>
+                <div class='row'>
+                    <div class='col s12'>
+                        <div id='pieChart'></div>
+                    </div>
+                </div>
+            </div>
+        </div>";
+
         echo '
             <div class="tryAgainContainer hide center-align">
                 <p>Oops! Something went wrong.</p>
@@ -205,6 +260,7 @@ class Sop {
         echo '</div>'; //sopContainer closing div
     }
 
+    // our categorization system what is evaulate the given value and give back title az color
     function categorization($score) {
         
         $categoryStyle = array();
@@ -238,6 +294,7 @@ class Sop {
         return $categoryStyle;
     }
 
+    // we save current label of our toolbar item into session, so during two analyzes we can display the value from the session
     function titleToSession($score) {
         
         if($score >= 80) {
@@ -252,6 +309,7 @@ class Sop {
         }
     }
 
+    // we select valueable information from API response
     function summaryFormatCompletion($format, $type, $args) {
         if($type === 'HYPERLINK') {
             $formatChange = str_replace('{{BEGIN_LINK}}', "<a href='" . $args[0][1] ."' target='_blank'>", $format);
@@ -273,20 +331,24 @@ class Sop {
         return $summaryFormat;
     }
 
+    // we bind our javascript an css file and we also bind Materialize for the styling
     function enqueue() {
         wp_enqueue_style('materializeCss', 'https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css');
         wp_enqueue_style('materializeIcons', 'https://fonts.googleapis.com/icon?family=Material+Icons');
         wp_enqueue_script('materializeJs', 'https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js');
+        wp_enqueue_script('highchartJs', 'https://code.highcharts.com/highcharts.js');
         wp_enqueue_script('myPluginScript', plugins_url('/admin/js/main.js', __FILE__));
         wp_enqueue_style('myPluginStyle', plugins_url('/admin/css/style.css', __FILE__));
         wp_localize_script( 'myPluginScript', 'sop_ajax',
             array( 'ajax_url' => admin_url( 'admin-ajax.php' )));
     }
 
+    // this method will call the enqueue method thorugh action hook
     function register() {
         add_action('admin_enqueue_scripts', array($this, 'enqueue'));
     }
 
+    // we create a dasboard widget what will appear at the top of the page
     function add_dashboard_widget() {
 
         wp_add_dashboard_widget(
@@ -306,6 +368,7 @@ class Sop {
             $wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
     }
 
+    // we just want to display the most problematic impacts, here we filter out them
     function getProblematicImpacts($ruleResults) {
         $problematicImpacts = array();
         foreach($ruleResults as $impact) {
@@ -321,6 +384,7 @@ class Sop {
         return $problematicImpacts;
     }
 
+    // this method build-up the widget with content
     function sop_dashboard_widget() {
 
         echo "<div class='widgetContainer'>";
@@ -422,8 +486,14 @@ class Sop {
         }
         echo "</div>";
     }
+
+    //check for meta tags
+    function sop_check_meta_tags() {
+        return get_meta_tags($_SERVER['HTTP_HOST']);
+    }
 }
 
+// if the class exist then we instantiate its an call action an filter hooks
 if (class_exists('Sop')) {
     $sopObj = new Sop();
     $sopObj->register();

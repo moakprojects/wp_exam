@@ -24,6 +24,13 @@ h4 {
     margin-bottom: 0;
 }
 
+.noLeftPadding {
+  padding-left: 0 !important;
+}
+
+.noRightPadding {
+  padding-right: 0 !important;
+}
 /* admin menu bar styling */
 
 .ab-icon.star:before {
@@ -456,3 +463,22 @@ h4 {
     left: -50px;
   }
   
+  /* meta table styling */
+
+  .metaTable {
+    border: 1px solid rgb(68, 68, 68);
+  }
+
+  .metaTable tr td,
+  .metaTable tr th {
+    text-align: center;
+    width: 50%;
+  }
+
+  .metaTable tr:nth-child(2n) {
+    background: white;
+  }
+  
+  .metaTable tr:last-child {
+    border-bottom: 1px solid rgb(68, 68, 68) !important;
+  }
