@@ -46,6 +46,9 @@ jQuery.get(apiUrl, {url: testUrl, key: apiKey, snapshots: true, screenshot: true
         } else {
             var otherResponse = 0;
         }
+        
+        var totalResponse = (htmlResponse + cssResponse + javascriptResponse + imageResponse + otherResponse) / 1000;
+        totalResponse = Math.round( totalResponse * 10 ) / 10;
 
         /* pagespeed insight */
     
@@ -128,7 +131,7 @@ jQuery.get(apiUrl, {url: testUrl, key: apiKey, snapshots: true, screenshot: true
                 jQuery('.collapsible').collapsible();
                 jQuery('.sopContainer').removeClass("hide");
 
-                buildChart(cssResponse, htmlResponse, javascriptResponse, imageResponse, otherResponse);
+                buildChart(cssResponse, htmlResponse, javascriptResponse, imageResponse, otherResponse, totalResponse);
             });
 
             var widgetData = {
@@ -147,7 +150,7 @@ jQuery.get(apiUrl, {url: testUrl, key: apiKey, snapshots: true, screenshot: true
     }
 });
 
-function buildChart(cssResponse, htmlResponse, javascriptResponse, imageResponse, otherResponse) {
+function buildChart(cssResponse, htmlResponse, javascriptResponse, imageResponse, otherResponse, totalResponse) {
     
     var pieColors = (function () {
         var colors = [],
@@ -219,4 +222,6 @@ function buildChart(cssResponse, htmlResponse, javascriptResponse, imageResponse
             ]
         }]
       });
+
+      jQuery('#totalContentSize').html("Total content size: " + totalResponse + " Kb");
 }

@@ -244,6 +244,7 @@ class Sop {
                 <div class='row'>
                     <div class='col s12'>
                         <div id='pieChart'></div>
+                        <div id='totalContentSize'></div>
                     </div>
                 </div>
             </div>
