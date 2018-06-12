@@ -1,4 +1,4 @@
-var apiKey = 'AIzaSyB4FTmZcK_2H9kh3qm5fErvtGf90xvoFMQ';
+var apiKey = 'API KEY';
 
 var testUrl = window.location.protocol + '//' + window.location.hostname;
 
